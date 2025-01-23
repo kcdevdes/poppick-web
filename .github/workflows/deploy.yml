@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,7 +15,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '23'
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install
@@ -24,7 +23,7 @@ jobs:
       - name: Build Next.js application
         run: npm run build
 
-      - name: Zip artifact
+      - name: Package application for Elastic Beanstalk
         run: zip -r app.zip . -x "node_modules/*"
 
       - name: Deploy to Elastic Beanstalk
@@ -32,8 +31,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: poppick-web # Elastic Beanstalk App Name
-          environment_name: Poppick-web-env # Elastic Beanstalk Env Name
+          application_name: poppick-web
+          environment_name: Poppick-web-env
+          region: ap-northeast-2
+          deployment_package: app.zip
           version_label: ${{ github.run_id }}
-          region: ap-northeast-2 # Seoul
-          zip_file: app.zip
